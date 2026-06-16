@@ -1,0 +1,198 @@
+/* Configuração Base da Tela */
+:host {
+  display: block;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f4f6f9;
+  min-height: 100vh;
+  padding: 40px 20px;
+  color: #333;
+}
+
+.container {
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+/* Cabeçalho */
+.cabecalho {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.cabecalho h2 {
+  color: #1a2b4c;
+  font-size: 28px;
+  margin-bottom: 5px;
+}
+
+.cabecalho p {
+  color: #6c757d;
+  font-size: 16px;
+  margin-top: 0;
+}
+
+/* Caixa de Busca */
+.busca-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+}
+
+input, select {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+  border-color: #0056b3;
+}
+
+.input-curto {
+  flex: 0.5;
+  min-width: 70px;
+}
+
+button {
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+  background-color: #004494;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+.mensagem-erro {
+  color: #dc3545;
+  background-color: #f8d7da;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Área de Resultados */
+.card-principal {
+  background-color: #ffffff;
+  border-left: 6px solid #28a745;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.rotulo {
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #28a745;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.card-principal h2 {
+  margin: 0 0 15px 0;
+  color: #1a2b4c;
+}
+
+.numero-destaque {
+  color: #6c757d;
+  font-weight: normal;
+}
+
+/* Tags de Partido e Federação */
+.tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.tag-partido {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.tag-federacao {
+  background-color: #e0f3ff;
+  color: #0056b3;
+}
+
+.divisor {
+  text-align: center;
+  color: #6c757d;
+  font-size: 16px;
+  margin: 30px 0;
+}
+
+/* Grid de Beneficiados */
+.grid-beneficiados {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.card-beneficiado {
+  background-color: #ffffff;
+  border: 1px solid #e9ecef;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-beneficiado h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.numero-texto {
+  color: #888;
+  font-size: 14px;
+}
+
+.tag-pequena {
+  align-self: flex-start;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.texto-vazio {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
