@@ -7,11 +7,14 @@
 
   <section class="busca-box">
     <input type="number" [(ngModel)]="numeroBusca" placeholder="Número (ex: 1234)">
+    
     <input type="text" [(ngModel)]="estadoBusca" placeholder="UF (ex: DF)" class="input-curto">
-    <select [(ngModel)]="cargoBusca">
+    
+    <select [value]="cargoBusca" (change)="cargoBusca = $any($event.target).value">
       <option value="Deputado Federal">Deputado Federal</option>
       <option value="Deputado Estadual">Deputado Estadual</option>
     </select>
+    
     <button (click)="buscarImpacto()">Pesquisar</button>
   </section>
 

@@ -9,7 +9,7 @@ import { ResultadoArrastaoDTO } from '../models/candidato.model';
 export class CandidatoService {
   
   // A URL base da nossa API Java
-  private apiUrl = 'http://localhost:8080/api/candidatos';
+  private apiUrl = 'http://127.0.0.1:8080/api/candidatos';
 
   // Injetamos o HttpClient (o "Postman" interno do Angular)
   constructor(private http: HttpClient) { }
