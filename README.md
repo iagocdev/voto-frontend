@@ -1,59 +1,47 @@
-# VotoFrontend
+Simulador de Efeito Arrastão( voto indireto) 🗳️
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.15.
+Um sistema Full-Stack desenvolvido para simular e demonstrar o funcionamento do sistema eleitoral proporcional brasileiro (o chamado "Efeito Arrastão"). A aplicação permite consultar candidatos e entender como um voto individual pode ajudar a eleger outros candidatos da mesma federação ou partido.
+🚀 Tecnologias Utilizadas
 
-## Development server
+Back-end: https://github.com/iagocdev/voto-backend
 
-To start a local development server, run:
+    Java
+    Spring Boot
+    PostgreSQL
+    Maven
 
-```bash
-ng serve
-```
+Front-end: https://github.com/iagocdev/voto-frontend
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+    Angular
+    TypeScript
+    PWA (Progressive Web App) - Instalável nativamente em Mobile e Desktop
+    HTML5 / CSS3
 
-## Code scaffolding
+Arquitetura e Funcionalidades
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+O projeto foi construído com foco em boas práticas de engenharia de software e performance:
 
-```bash
-ng generate component component-name
-```
+    Consulta Síncrona Rigorosa: Comunicação fluida entre a interface Angular e a API REST em Spring Boot para cálculo em tempo real do destino dos votos.
+    Pipeline de Ingestão de Dados (Data Ingestion): Motor customizado no back-end para processamento em lote (Batch Processing) e sanitização de arquivos .csv gigantescos contendo os dados oficiais abertos do TSE, persistindo os registros de forma otimizada no PostgreSQL.
+    Controle de Renderização Avançado: Utilização do ChangeDetectorRef no Angular para garantir a sincronia exata da interface do usuário com a resolução de requisições assíncronas complexas.
+    PWA Instalável: O sistema front-end foi empacotado com Service Workers e um Web Manifest customizado, garantindo uma experiência de aplicativo nativo para o usuário final, com tempos de carregamento reduzidos (caching).
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Como Executar o Projeto Localmente
+Pré-requisitos
 
-```bash
-ng generate --help
-```
+    Java 17+
+    Node.js (v18+) e Angular CLI
+    PostgreSQL rodando localmente
 
-## Building
+1. Configurando o Back-end (Spring Boot)
 
-To build the project run:
+    Crie um banco de dados no PostgreSQL (verifique o nome e as credenciais no arquivo application.properties).
+    Abra o projeto na sua IDE Java favorita.
+    Execute a classe principal da aplicação para levantar o servidor na porta padrão (8080).
 
-```bash
-ng build
-```
+2. Configurando o Front-end (Angular)
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+    Abra o terminal na pasta do front-end.
+    Instale as dependências:
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+    npm install
