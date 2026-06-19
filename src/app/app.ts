@@ -1,6 +1,7 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef , OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SwUpdate } from '@angular/service-worker';
 import { CandidatoService } from './services/candidato';
 import { ResultadoArrastaoDTO } from './models/candidato.model';
 
@@ -11,7 +12,7 @@ import { ResultadoArrastaoDTO } from './models/candidato.model';
   templateUrl: './app.html',  
   styleUrl: './app.css'       
 })
-export class App {
+export class App implements OnInit {
   
   // Variáveis ligadas aos inputs da tela
   numeroBusca: number | null = null;
@@ -31,8 +32,32 @@ export class App {
   // Injeção do construtor mantida e segura
   constructor(
     private candidatoService: CandidatoService, 
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private swUpdate: SwUpdate
   ) {}
+
+  // Essa função roda automaticamente quando a tela abre
+  ngOnInit() {
+    this.verificarAtualizacoesPWA();
+  }
+
+  verificarAtualizacoesPWA() {
+    // Primeiro checa se o navegador suporta e se o Service Worker está ligado
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.versionUpdates.subscribe((evento) => {
+        // Se o evento avisar que a versão nova já foi baixada e está pronta...
+        if (evento.type === 'VERSION_READY') {
+          // Mostra um alerta padrão do navegador
+          const atualiza = confirm('🚀 Uma nova versão do Simulador está disponível! Deseja atualizar agora para carregar as novidades?');
+          
+          if (atualiza) {
+            // Força o recarregamento limpando o cache antigo automaticamente
+            window.location.reload();
+          }
+        }
+      });
+    }
+  }
 
   // Motor Dinâmico de Cargos: Roda a cada letra digitada no campo de Estado
   atualizarCargos() {
