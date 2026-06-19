@@ -1,47 +1,134 @@
-Simulador de Efeito Arrastão( voto indireto) 🗳️
+#  VotoConsciente — Frontend
 
-Um sistema Full-Stack desenvolvido para simular e demonstrar o funcionamento do sistema eleitoral proporcional brasileiro (o chamado "Efeito Arrastão"). A aplicação permite consultar candidatos e entender como um voto individual pode ajudar a eleger outros candidatos da mesma federação ou partido.
-🚀 Tecnologias Utilizadas
+> **Descubra quem os seus votos ajudam a eleger.**
+> Interface Angular que visualiza o Efeito Arrastão do sistema eleitoral proporcional brasileiro.
 
-Back-end: https://github.com/iagocdev/voto-backend
+---
 
-    Java
-    Spring Boot
-    PostgreSQL
-    Maven
+##  Sobre o Projeto
 
-Front-end: https://github.com/iagocdev/voto-frontend
+No sistema proporcional brasileiro, votar em um candidato pode eleger outro. Esse fenômeno, conhecido como **Efeito Arrastão**, acontece porque os votos se somam dentro de uma federação ou partido para definir quantas vagas cada grupo conquista.
 
-    Angular
-    TypeScript
-    PWA (Progressive Web App) - Instalável nativamente em Mobile e Desktop
-    HTML5 / CSS3
+O **VotoConsciente** expõe esse mecanismo de forma clara: o eleitor informa o número do candidato, o estado e o cargo, e a aplicação exibe todos os outros candidatos da mesma federação que seriam beneficiados por esse voto.
 
-Arquitetura e Funcionalidades
+**Repositório backend:** [iagocdev/voto-backend](https://github.com/iagocdev/voto-backend)
 
-O projeto foi construído com foco em boas práticas de engenharia de software e performance:
+---
 
-    Consulta Síncrona Rigorosa: Comunicação fluida entre a interface Angular e a API REST em Spring Boot para cálculo em tempo real do destino dos votos.
-    Pipeline de Ingestão de Dados (Data Ingestion): Motor customizado no back-end para processamento em lote (Batch Processing) e sanitização de arquivos .csv gigantescos contendo os dados oficiais abertos do TSE, persistindo os registros de forma otimizada no PostgreSQL.
-    Controle de Renderização Avançado: Utilização do ChangeDetectorRef no Angular para garantir a sincronia exata da interface do usuário com a resolução de requisições assíncronas complexas.
-    PWA Instalável: O sistema front-end foi empacotado com Service Workers e um Web Manifest customizado, garantindo uma experiência de aplicativo nativo para o usuário final, com tempos de carregamento reduzidos (caching).
+##  Stack Tecnológica
 
-Como Executar o Projeto Localmente
-Pré-requisitos
+| Camada | Tecnologia | Versão |
+|---|---|---|
+| Framework | Angular | 21.2 |
+| Linguagem | TypeScript | 5.9 |
+| HTTP Client | Angular HttpClient | nativo |
+| Formulários | Angular FormsModule | nativo |
+| Testes | Vitest | 4.0 |
+| Formatação | Prettier | 3.8 |
+| Runtime | Node.js | 20+ |
+| Package Manager | npm | 10.9+ |
 
-    Java 17+
-    Node.js (v18+) e Angular CLI
-    PostgreSQL rodando localmente
+---
 
-1. Configurando o Back-end (Spring Boot)
+##  Arquitetura
 
-    Crie um banco de dados no PostgreSQL (verifique o nome e as credenciais no arquivo application.properties).
-    Abra o projeto na sua IDE Java favorita.
-    Execute a classe principal da aplicação para levantar o servidor na porta padrão (8080).
+```
+src/
+└── app/
+    ├── app.ts               # Componente raiz — lógica de busca e renderização
+    ├── app.html             # Template do Simulador de Efeito Arrastão
+    ├── app.css              # Estilos do componente principal
+    ├── app.config.ts        # Configuração global (providers, router, HttpClient)
+    ├── app.routes.ts        # Definição de rotas
+    ├── models/
+    │   └── candidato.model.ts   # Interfaces TypeScript (Candidato, ResultadoArrastaoDTO)
+    └── services/
+        └── candidato.ts         # CandidatoService — comunicação com a API REST
+```
 
-2. Configurando o Front-end (Angular)
+### Decisões técnicas notáveis
 
-    Abra o terminal na pasta do front-end.
-    Instale as dependências:
+**Comunicação com a API:** o `CandidatoService` utiliza o `HttpClient` nativo do Angular com `HttpParams` para montar os parâmetros da query string de forma tipada e segura.
 
-    npm install
+**Controle de renderização (`ChangeDetectorRef`):** o Angular 21 opera em modo mais rigoroso de detecção de mudanças. O `ChangeDetectorRef.detectChanges()` é chamado explicitamente após a resolução do Observable do `HttpClient`, garantindo que a interface atualize imediatamente após o retorno da API — sem depender de interações do usuário como gatilho.
+
+**Configuração limpa (`app.config.ts`):** o `provideClientHydration(withEventReplay())` foi removido intencionalmente. Essa opção é voltada para SSR (Server-Side Rendering) e causava interferência no ciclo de vida dos eventos em aplicações SPA puras, segurando os resultados de requisições HTTP antes de renderizá-los.
+
+---
+
+##  Como Rodar Localmente
+
+### Pré-requisitos
+
+- Node.js 20+
+- Angular CLI 21+
+- Backend rodando em `http://localhost:8080` ([voto-backend](https://github.com/iagocdev/voto-backend))
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/iagocdev/voto-frontend.git
+cd voto-frontend
+```
+
+### 2. Instale as dependências
+
+```bash
+npm install
+```
+
+### 3. Execute a aplicação
+
+```bash
+npm start
+# ou
+ng serve
+```
+
+A aplicação estará disponível em `http://localhost:4200`.
+
+---
+
+##  Como Usar
+
+1. Digite o **número do candidato** na urna (ex: `1234`)
+2. Informe a **UF** do estado (ex: `DF`)
+3. Selecione o **cargo** (`Deputado Federal` ou `Deputado Estadual`)
+4. Clique em **Pesquisar**
+
+A tela exibirá o candidato buscado e todos os outros candidatos da mesma federação que seriam beneficiados pelo seu voto naquele estado.
+
+---
+
+##  Integração com o Backend
+
+O frontend consome a seguinte rota da API:
+
+```
+GET http://localhost:8080/api/candidatos/impacto
+  ?numero=1234
+  &estadoUf=DF
+  &cargo=Deputado Federal
+```
+
+O `estadoUf` é sempre enviado em maiúsculo (`.toUpperCase()`) antes da requisição.
+
+---
+
+## Testes
+
+```bash
+npm test
+```
+
+Os testes utilizam **Vitest** como runner.
+
+---
+
+##  Licença
+
+Projeto de código aberto para fins educacionais e de portfólio.
+
+---
+
+*Desenvolvido por [Iago](https://github.com/iagocdev) — Angular & TypeScript*
