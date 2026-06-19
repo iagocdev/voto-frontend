@@ -31,11 +31,13 @@
   margin-top: 0;
 }
 
-/* Caixa de Busca */
+/* Caixa de Busca Otimizada (Mesclada) */
 .busca-box {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 15px;
+  align-items: flex-end;
+  justify-content: center;
   background-color: #ffffff;
   padding: 20px;
   border-radius: 12px;
@@ -43,19 +45,38 @@
   margin-bottom: 30px;
 }
 
-input, select {
-  flex: 1;
+.campo-busca {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  flex: 1; /* Faz os campos crescerem por igual */
   min-width: 120px;
-  padding: 12px;
-  border: 1px solid #ced4da;
+}
+
+.campo-busca label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.campo-busca input,
+.campo-busca select {
+  padding: 10px 15px;
+  border: 1px solid #cbd5e1;
   border-radius: 6px;
-  font-size: 15px;
+  font-size: 1rem;
+  height: 42px;
+  box-sizing: border-box;
   outline: none;
   transition: border-color 0.2s;
 }
 
-input:focus, select:focus {
-  border-color: #0056b3;
+.campo-busca input:focus, 
+.campo-busca select:focus {
+  border-color: #2563eb;
 }
 
 .input-curto {
@@ -63,11 +84,13 @@ input:focus, select:focus {
   min-width: 70px;
 }
 
-button {
-  background-color: #0056b3;
+/* Botão Otimizado */
+.btn-pesquisar {
+  height: 42px;
+  padding: 0 24px;
+  background-color: #2563eb;
   color: white;
   border: none;
-  padding: 12px 24px;
   border-radius: 6px;
   font-size: 16px;
   font-weight: bold;
@@ -75,14 +98,15 @@ button {
   transition: background-color 0.2s, transform 0.1s;
 }
 
-button:hover {
-  background-color: #004494;
+.btn-pesquisar:hover {
+  background-color: #1d4ed8;
 }
 
-button:active {
+.btn-pesquisar:active {
   transform: scale(0.98);
 }
 
+/* Mensagens e Resultados */
 .mensagem-erro {
   color: #dc3545;
   background-color: #f8d7da;
@@ -92,7 +116,6 @@ button:active {
   font-weight: bold;
 }
 
-/* Área de Resultados */
 .card-principal {
   background-color: #ffffff;
   border-left: 6px solid #28a745;
@@ -195,4 +218,30 @@ button:active {
   text-align: center;
   color: #888;
   font-style: italic;
+}
+
+/* Container do texto de loading */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* A bolinha */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  /* Usamos 'linear' para um giro suave e contínuo */
+  animation: girar 1s linear infinite; 
+}
+
+/* O motor da animação (deve ficar solto aqui no final, fora de qualquer outra classe) */
+@keyframes girar {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

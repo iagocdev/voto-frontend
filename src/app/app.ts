@@ -6,6 +6,7 @@ import { ResultadoArrastaoDTO } from './models/candidato.model';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './app.html',  
   styleUrl: './app.css'       
@@ -16,39 +17,105 @@ export class App {
   numeroBusca: number | null = null;
   estadoBusca: string = '';
   cargoBusca: string = '';
+  
+  // Lista dinâmica
+  cargosDisponiveis: string[] = ['Deputado Federal', 'Deputado Estadual'];
 
-  // Variáveis para guardar a resposta do Java
+  // Variáveis de resposta
   resultado: ResultadoArrastaoDTO | null = null;
   mensagemErro: string = '';
 
-  // Injetando o nosso mensageiro
-  constructor(private candidatoService: CandidatoService, private cdr: ChangeDetectorRef) {}
-  
+  // 1. ADICIONE A VARIÁVEL DE CONTROLE DE CARREGAMENTO AQUI 👇
+  carregando: boolean = false; 
+
+  // Injeção do construtor mantida e segura
+  constructor(
+    private candidatoService: CandidatoService, 
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  // Motor Dinâmico de Cargos: Roda a cada letra digitada no campo de Estado
+  atualizarCargos() {
+    const estadoFormatado = this.estadoBusca ? this.estadoBusca.trim().toUpperCase() : '';
+
+    if (estadoFormatado === 'DF') {
+      this.cargosDisponiveis = ['Deputado Federal', 'Deputado Distrital'];
+      
+      if (this.cargoBusca === 'Deputado Estadual') {
+        this.cargoBusca = 'Deputado Distrital';
+      }
+    } else {
+      this.cargosDisponiveis = ['Deputado Federal', 'Deputado Estadual'];
+      
+      if (this.cargoBusca === 'Deputado Distrital') {
+        this.cargoBusca = 'Deputado Estadual';
+      }
+    }
+    
+    // Força a tela a atualizar o Select de cargos imediatamente
+    this.cdr.detectChanges();
+  }
 
   // A função que roda quando o usuário clica no botão "Pesquisar"
   buscarImpacto() {
     console.log("Enviando para o Java -> Número:", this.numeroBusca, " | Estado:", this.estadoBusca, " | Cargo:", this.cargoBusca);
-    // Validação básica para evitar buscas vazias
+    
+    // 1. Validação de campos vazios
     if (!this.numeroBusca || !this.estadoBusca || !this.cargoBusca) {
       this.mensagemErro = 'Por favor, preencha todos os campos!';
+      this.cdr.detectChanges(); // Atualiza a tela com o erro
       return;
     }
 
+    // 2. Trava de Segurança do TSE (Tamanho do Número)
+    const tamanhoNumero = this.numeroBusca.toString().length;
+    
+    if (this.cargoBusca === 'Deputado Federal' && tamanhoNumero !== 4) {
+      this.mensagemErro = 'O número para Deputado Federal deve ter exatamente 4 dígitos.';
+      this.cdr.detectChanges();
+      return;
+    }
+    
+    if ((this.cargoBusca === 'Deputado Estadual' || this.cargoBusca === 'Deputado Distrital') && tamanhoNumero !== 5) {
+      this.mensagemErro = `O número para ${this.cargoBusca} deve ter exatamente 5 dígitos.`;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    // Passou nas travas: limpa erros e prepara para buscar
     this.mensagemErro = '';
     this.resultado = null;
+    
+    // 2. LIGA O SPINNER DE CARREGAMENTO AQUI 
+    this.carregando = true;
+    this.cdr.detectChanges(); 
 
     // Chama o back-end em Java
     this.candidatoService.simularArrastao(this.numeroBusca, this.estadoBusca.trim().toUpperCase(), this.cargoBusca)
       .subscribe({
         next: (dados) => {
-          this.resultado = dados; // Guarda o JSON na variável para o HTML desenhar
-          this.cdr.detectChanges(); // Força a detecção de mudanças
+          this.resultado = dados; 
+
+          // Atraso artificial de 1 segundo só para vermos a animação
+          setTimeout(() => {
+            this.carregando = false;
+            this.cdr.detectChanges(); 
+          }, 1000);
+          
+          // 3. DESLIGA O SPINNER AQUI (SUCESSO) 
+          this.carregando = false;
+          this.cdr.detectChanges(); 
         },
         error: (erro) => {
           this.mensagemErro = 'Candidato não encontrado ou erro de conexão.';
-          this.cdr.detectChanges(); // Força a detecção de mudanças para mostrar a mensagem de erro
+          
+          // 4. DESLIGA O SPINNER AQUI (ERRO) 
+          this.carregando = false;
+          this.cdr.detectChanges(); 
           console.error(erro);
         }
+
+        
       });
   }
 }
