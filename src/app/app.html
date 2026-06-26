@@ -1,12 +1,20 @@
 <main class="container">
   
   <header class="cabecalho">
-    <h2>Simulador do Efeito Arrastão 🗳️</h2>
+    <h2>Simulador Voto Indireto</h2>
     <p>Descubra quem os seus votos ajudam a eleger.</p>
   </header>
 
   <section class="busca-box">
     
+    <div class="campo-busca">
+      <label for="ano">Ano</label>
+      <select id="ano" [(ngModel)]="anoSelecionado">
+        <option [ngValue]="2026">2026 (Projeção)</option>
+        <option [ngValue]="2022">2022 (Oficial)</option>
+      </select>
+    </div>
+
     <div class="campo-busca">
       <label for="cargo">Cargo</label>
       <select id="cargo" [(ngModel)]="cargoBusca">
@@ -18,15 +26,15 @@
     </div>
 
     <div class="campo-busca">
-      <label for="numero">Número Candidato</label>
-      <input id="numero" type="number" [(ngModel)]="numeroBusca" 
-             [placeholder]="cargoBusca === 'Deputado Federal' ? 'Ex: 1313' : 'Ex: 50500'">
-    </div>
-    
-    <div class="campo-busca">
       <label for="estado">Estado</label>
       <input id="estado" type="text" [(ngModel)]="estadoBusca" (ngModelChange)="atualizarCargos()" 
              placeholder="Ex: DF" class="input-curto" maxlength="2">
+    </div>
+
+    <div class="campo-busca">
+      <label for="numero">Número Candidato</label>
+      <input id="numero" type="number" [(ngModel)]="numeroBusca" 
+             [placeholder]="cargoBusca === 'Deputado Federal' ? 'Ex: 1313' : 'Ex: 50500'">
     </div>
     
     <button class="btn-pesquisar" (click)="buscarImpacto()">Pesquisar</button>
@@ -35,7 +43,6 @@
     <div *ngIf="carregando" class="loading-container">
       <span class="spinner"></span> 
     </div>
-
     
   </section>
 
@@ -59,12 +66,12 @@
     <div class="grid-beneficiados">
       
       <div *ngFor="let colega of resultado.beneficiados" class="card-beneficiado">
-    <h4>
-      {{ colega.nomeUrna }} <span class="numero-texto">({{ colega.numero }})</span>
-      <span style="color: #d97706; font-size: 12px; margin-left: 5px;">🏅 ELEITO</span>
-    </h4>
-    <span class="tag-pequena">{{ colega.partido }}</span>
-    </div>
+        <h4>
+          {{ colega.nomeUrna }} <span class="numero-texto">({{ colega.numero }})</span>
+          <span style="color: #d97706; font-size: 12px; margin-left: 5px;">🏅 ELEITO</span>
+        </h4>
+        <span class="tag-pequena">{{ colega.partido }}</span>
+      </div>
 
       <p *ngIf="resultado.beneficiados.length === 0" class="texto-vazio">
         Nenhum outro candidato desta federação foi encontrado neste estado.

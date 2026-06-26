@@ -19,39 +19,35 @@ export class App implements OnInit {
   estadoBusca: string = '';
   cargoBusca: string = '';
   
-  // Lista dinâmica
+  // 1. NOVA VARIÁVEL: Controla o ano selecionado na tela (Inicia em 2026)
+  anoSelecionado: number = 2026; 
+  
+  // Lista dinâmica de cargos
   cargosDisponiveis: string[] = ['Deputado Federal', 'Deputado Estadual'];
 
   // Variáveis de resposta
   resultado: ResultadoArrastaoDTO | null = null;
   mensagemErro: string = '';
 
-  // 1. ADICIONE A VARIÁVEL DE CONTROLE DE CARREGAMENTO AQUI 👇
+  // Controle de carregamento (Spinner)
   carregando: boolean = false; 
 
-  // Injeção do construtor mantida e segura
   constructor(
     private candidatoService: CandidatoService, 
     private cdr: ChangeDetectorRef,
     private swUpdate: SwUpdate
   ) {}
 
-  // Essa função roda automaticamente quando a tela abre
   ngOnInit() {
     this.verificarAtualizacoesPWA();
   }
 
   verificarAtualizacoesPWA() {
-    // Primeiro checa se o navegador suporta e se o Service Worker está ligado
     if (this.swUpdate.isEnabled) {
       this.swUpdate.versionUpdates.subscribe((evento) => {
-        // Se o evento avisar que a versão nova já foi baixada e está pronta...
         if (evento.type === 'VERSION_READY') {
-          // Mostra um alerta padrão do navegador
           const atualiza = confirm('🚀 Uma nova versão do Simulador está disponível! Deseja atualizar agora para carregar as novidades?');
-          
           if (atualiza) {
-            // Força o recarregamento limpando o cache antigo automaticamente
             window.location.reload();
           }
         }
@@ -59,40 +55,32 @@ export class App implements OnInit {
     }
   }
 
-  // Motor Dinâmico de Cargos: Roda a cada letra digitada no campo de Estado
   atualizarCargos() {
     const estadoFormatado = this.estadoBusca ? this.estadoBusca.trim().toUpperCase() : '';
 
     if (estadoFormatado === 'DF') {
       this.cargosDisponiveis = ['Deputado Federal', 'Deputado Distrital'];
-      
       if (this.cargoBusca === 'Deputado Estadual') {
         this.cargoBusca = 'Deputado Distrital';
       }
     } else {
       this.cargosDisponiveis = ['Deputado Federal', 'Deputado Estadual'];
-      
       if (this.cargoBusca === 'Deputado Distrital') {
         this.cargoBusca = 'Deputado Estadual';
       }
     }
-    
-    // Força a tela a atualizar o Select de cargos imediatamente
     this.cdr.detectChanges();
   }
 
-  // A função que roda quando o usuário clica no botão "Pesquisar"
   buscarImpacto() {
-    console.log("Enviando para o Java -> Número:", this.numeroBusca, " | Estado:", this.estadoBusca, " | Cargo:", this.cargoBusca);
+    console.log("Enviando para o Java -> Número:", this.numeroBusca, " | Estado:", this.estadoBusca, " | Cargo:", this.cargoBusca, " | Ano:", this.anoSelecionado);
     
-    // 1. Validação de campos vazios
     if (!this.numeroBusca || !this.estadoBusca || !this.cargoBusca) {
       this.mensagemErro = 'Por favor, preencha todos os campos!';
-      this.cdr.detectChanges(); // Atualiza a tela com o erro
+      this.cdr.detectChanges();
       return;
     }
 
-    // 2. Trava de Segurança do TSE (Tamanho do Número)
     const tamanhoNumero = this.numeroBusca.toString().length;
     
     if (this.cargoBusca === 'Deputado Federal' && tamanhoNumero !== 4) {
@@ -107,40 +95,33 @@ export class App implements OnInit {
       return;
     }
 
-    // Passou nas travas: limpa erros e prepara para buscar
     this.mensagemErro = '';
     this.resultado = null;
-    
-    // 2. LIGA O SPINNER DE CARREGAMENTO AQUI 
     this.carregando = true;
     this.cdr.detectChanges(); 
 
-    // Chama o back-end em Java
-    this.candidatoService.simularArrastao(this.numeroBusca, this.estadoBusca.trim().toUpperCase(), this.cargoBusca)
-      .subscribe({
-        next: (dados) => {
+    // 2. ATUALIZADO: Passando o anoSelecionado como o 4º parâmetro para a API
+    this.candidatoService.simularArrastao(
+      this.numeroBusca, 
+      this.estadoBusca.trim().toUpperCase(), 
+      this.cargoBusca, 
+      this.anoSelecionado
+    )
+    .subscribe({
+      next: (dados) => {
+        // Correção do efeito visual: O estado de carregamento agora desliga estritamente após 1 segundo
+        setTimeout(() => {
           this.resultado = dados; 
-
-          // Atraso artificial de 1 segundo só para vermos a animação
-          setTimeout(() => {
-            this.carregando = false;
-            this.cdr.detectChanges(); 
-          }, 1000);
-          
-          // 3. DESLIGA O SPINNER AQUI (SUCESSO) 
           this.carregando = false;
           this.cdr.detectChanges(); 
-        },
-        error: (erro) => {
-          this.mensagemErro = 'Candidato não encontrado ou erro de conexão.';
-          
-          // 4. DESLIGA O SPINNER AQUI (ERRO) 
-          this.carregando = false;
-          this.cdr.detectChanges(); 
-          console.error(erro);
-        }
-
-        
-      });
+        }, 1000);
+      },
+      error: (erro) => {
+        this.mensagemErro = 'Candidato não encontrado ou erro de conexão.';
+        this.carregando = false;
+        this.cdr.detectChanges(); 
+        console.error(erro);
+      }
+    });
   }
 }

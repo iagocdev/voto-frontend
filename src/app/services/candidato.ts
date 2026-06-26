@@ -14,14 +14,16 @@ export class CandidatoService {
   // Injetamos o HttpClient (o "Postman" interno do Angular)
   constructor(private http: HttpClient) { }
 
-  // Método que vai buscar o nosso JSON montado
-  simularArrastao(numero: number, estadoUf: string, cargo: string): Observable<ResultadoArrastaoDTO> {
+  // 1. ATUALIZADO: Adicionamos o "ano: number" na assinatura do método
+  simularArrastao(numero: number, estadoUf: string, cargo: string, ano: number): Observable<ResultadoArrastaoDTO> {
     
-    // Monta os parâmetros que vão na URL (?numero=...&estadoUf=...&cargo=...)
+    // Monta os parâmetros que vão na URL (?numero=...&estadoUf=...&cargo=...&anoEleicao=...)
     let params = new HttpParams()
       .set('numero', numero.toString())
       .set('estadoUf', estadoUf)
-      .set('cargo', cargo);
+      .set('cargo', cargo)
+      // 2. ATUALIZADO: Adicionamos o ano no envio para o Java
+      .set('anoEleicao', ano.toString()); 
 
     // Faz o GET e avisa que o retorno será no formato da nossa Interface (DTO)
     return this.http.get<ResultadoArrastaoDTO>(`${this.apiUrl}/impacto`, { params });
